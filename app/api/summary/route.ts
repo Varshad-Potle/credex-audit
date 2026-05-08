@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 import { AuditResult } from "@/types";
 import { PRICING_DATA } from "@/lib/pricingData";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 function generateFallbackSummary(audit: AuditResult): string {
@@ -24,10 +24,11 @@ function generateFallbackSummary(audit: AuditResult): string {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { audit?: AuditResult } = {};
+  let audit: AuditResult | null = null;
+
   try {
-    body = await req.json();
-    const audit = body.audit;
+    const body = await req.json();
+    audit = body.audit as AuditResult;
 
     if (!audit) {
       return NextResponse.json(
@@ -53,24 +54,18 @@ Total potential annual savings: $${audit.totalAnnualSavings}
 
 Write a direct, specific summary. Lead with the most impactful finding. Use exact numbers. Do not use bullet points. Do not be generic. Sound like a CFO giving a quick verbal briefing, not a chatbot.`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
       max_tokens: 200,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const summary =
-      message.content[0].type === "text"
-        ? message.content[0].text
-        : generateFallbackSummary(audit);
+    const summary = completion.choices[0]?.message?.content ?? generateFallbackSummary(audit);
 
     return NextResponse.json({ summary });
   } catch (err) {
     console.error("Summary API error:", err);
-    // graceful fallback — never crash the results page
-    const fallback = body?.audit
-      ? generateFallbackSummary(body.audit)
-      : "Unable to generate summary. Please try again.";
+    const fallback = audit ? generateFallbackSummary(audit) : "Unable to generate summary.";
     return NextResponse.json({ summary: fallback });
   }
 }
