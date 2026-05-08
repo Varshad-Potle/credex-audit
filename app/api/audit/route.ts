@@ -3,6 +3,8 @@ import { supabase } from "@/lib/supabase";
 import { runAudit } from "@/lib/auditEngine";
 import { FormData } from "@/types";
 
+console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();

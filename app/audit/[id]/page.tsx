@@ -3,14 +3,13 @@ import { supabase } from "@/lib/supabase";
 import { AuditResult } from "@/types";
 import AuditResults from "@/components/results/AuditResults";
 import LeadCapture from "@/components/results/LeadCapture";
-import CopyButton from "@/components/results/CopyButton";
+import ShareButton from "@/components/results/ShareButton";
 import { Metadata } from "next";
 
 type Props = {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 };
 
-// ── Fetch audit from Supabase
 async function getAudit(id: string): Promise<AuditResult | null> {
     const { data, error } = await supabase
         .from("audits")
@@ -31,7 +30,6 @@ async function getAudit(id: string): Promise<AuditResult | null> {
     };
 }
 
-// ── Fetch AI summary
 async function getSummary(audit: AuditResult): Promise<string> {
     try {
         const res = await fetch(
@@ -50,9 +48,9 @@ async function getSummary(audit: AuditResult): Promise<string> {
     }
 }
 
-// ── OG meta tags
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const audit = await getAudit(params.id);
+    const { id } = await params;
+    const audit = await getAudit(id);
 
     if (!audit) {
         return { title: "Audit not found" };
@@ -87,14 +85,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-// ── Page
 export default async function AuditPage({ params }: Props) {
-    const audit = await getAudit(params.id);
+    const { id } = await params;
+    const audit = await getAudit(id);
 
     if (!audit) notFound();
 
     const aiSummary = await getSummary(audit);
-
     const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/audit/${audit.id}`;
 
     return (
@@ -132,15 +129,7 @@ export default async function AuditPage({ params }: Props) {
                 <AuditResults audit={audit} aiSummary={aiSummary} />
 
                 {/* ── Share ── */}
-                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs text-muted-foreground mb-1">
-                            Share your audit
-                        </p>
-                        <p className="text-sm font-mono truncate">{shareUrl}</p>
-                    </div>
-                    <CopyButton text={shareUrl} />
-                </div>
+                <ShareButton shareUrl={shareUrl} />
 
                 {/* ── Lead capture ── */}
                 <LeadCapture
@@ -158,16 +147,16 @@ export default async function AuditPage({ params }: Props) {
                     </a>
                 </div>
 
-        </section>
+            </section>
 
-      {/* ── Footer ── */ }
-    <footer className="border-t mt-8">
-        <div className="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between text-xs text-muted-foreground">
-            <span>© 2026 Credex · credex.rocks</span>
-            <span>Pricing data verified weekly</span>
-        </div>
-    </footer>
+            {/* ── Footer ── */}
+            <footer className="border-t mt-8">
+                <div className="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>© 2026 Credex · credex.rocks</span>
+                    <span>Pricing data verified weekly</span>
+                </div>
+            </footer>
 
-    </main>
-  );
+        </main>
+    );
 }
