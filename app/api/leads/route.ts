@@ -1,47 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { runAudit } from "@/lib/auditEngine";
-import { FormData } from "@/types";
+import { Lead } from "@/types";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const formData: FormData = body.formData;
+        const lead: Lead = body.lead;
 
-        if (!formData || !formData.tools || formData.tools.length === 0) {
+        if (body.website) {
+            return NextResponse.json({ success: true });
+        }
+
+        if (!lead.email || !lead.auditId) {
             return NextResponse.json(
-                { error: "Invalid form data" },
+                { error: "Email and audit ID are required" },
                 { status: 400 }
             );
         }
 
-        const auditResult = runAudit(formData);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(lead.email)) {
+            return NextResponse.json(
+                { error: "Invalid email address" },
+                { status: 400 }
+            );
+        }
 
-        const { data, error } = await supabase
-            .from("audits")
-            .insert({
-                form_data: auditResult.formData,
-                recommendations: auditResult.recommendations,
-                total_monthly_savings: auditResult.totalMonthlySavings,
-                total_annual_savings: auditResult.totalAnnualSavings,
-            })
-            .select("id")
-            .single();
+        const { error } = await supabase.from("leads").insert({
+            audit_id: lead.auditId,
+            email: lead.email,
+            company_name: lead.companyName,
+            role: lead.role,
+            team_size: lead.teamSize,
+        });
 
         if (error) {
-            console.error("Supabase error:", error);
+            console.error("Supabase leads error:", error);
             return NextResponse.json(
-                { error: "Failed to save audit" },
+                { error: "Failed to save lead" },
                 { status: 500 }
             );
         }
 
-        return NextResponse.json({
-            id: data.id,
-            ...auditResult,
-        });
+        return NextResponse.json({ success: true });
     } catch (err) {
-        console.error("Audit API error:", err);
+        console.error("Leads API error:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
