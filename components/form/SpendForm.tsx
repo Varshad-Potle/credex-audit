@@ -40,12 +40,13 @@ export default function SpendForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // ── Load from localStorage on mount
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             try {
-                setFormData(JSON.parse(saved));
+                const parsed = JSON.parse(saved);
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                setFormData(parsed);
             } catch {
                 localStorage.removeItem(STORAGE_KEY);
             }

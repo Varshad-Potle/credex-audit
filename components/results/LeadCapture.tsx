@@ -85,7 +85,7 @@ export default function LeadCapture({ auditId, totalMonthlySavings }: Props) {
             </CardHeader>
             <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                    We'll email you the full breakdown. No spam. One email.
+                    We&apos;ll email you the full breakdown. No spam. One email.
                 </p>
 
                 {/* honeypot — hidden from real users */}

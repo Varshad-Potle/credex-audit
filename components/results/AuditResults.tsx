@@ -24,7 +24,7 @@ export default function AuditResults({ audit, aiSummary }: Props) {
                 <CardContent className="pt-6 text-center space-y-2">
                     {totalMonthlySavings === 0 ? (
                         <>
-                            <p className="text-2xl font-bold">You're spending well. ✓</p>
+                            You&apos;re spending well. ✓
                             <p className="text-muted-foreground">
                                 Your current AI stack is optimized for your team size and use case. No changes recommended right now.
                             </p>
@@ -73,7 +73,7 @@ export default function AuditResults({ audit, aiSummary }: Props) {
                     <CardContent className="pt-6 space-y-2">
                         <p className="font-medium">Want to know when new optimizations apply to your stack?</p>
                         <p className="text-sm text-muted-foreground">
-                            AI tool pricing changes frequently. We'll notify you when a better option appears for your setup.
+                            You&apos;re spending well
                         </p>
                     </CardContent>
                 </Card>

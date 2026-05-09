@@ -5,6 +5,7 @@ import AuditResults from "@/components/results/AuditResults";
 import LeadCapture from "@/components/results/LeadCapture";
 import ShareButton from "@/components/results/ShareButton";
 import { Metadata } from "next";
+import Link from "next/link";
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -100,12 +101,12 @@ export default async function AuditPage({ params }: Props) {
             {/* ── Header ── */}
             <header className="border-b">
                 <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <a href="/" className="font-semibold text-lg tracking-tight hover:opacity-80 transition-opacity">
+                    <Link href="/" className="font-semibold text-lg tracking-tight hover:opacity-80 transition-opacity">
                         SpendAudit{" "}
                         <span className="text-muted-foreground font-normal text-sm">
                             by Credex
                         </span>
-                    </a>
+                    </Link>
                     <span className="text-xs text-muted-foreground">
                         Audit · {new Date(audit.createdAt!).toLocaleDateString()}
                     </span>
@@ -139,12 +140,12 @@ export default async function AuditPage({ params }: Props) {
 
                 {/* ── Run another ── */}
                 <div className="text-center">
-                    <a
+                    <Link
                         href="/"
                         className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                         ← Run another audit
-                    </a>
+                    </Link>
                 </div>
 
             </section>

@@ -86,8 +86,6 @@ function auditSingleTool(
         };
     }
 
-    const currentSpendPerSeat = monthlySpend / seats;
-
     // ── Check 1: Are they paying retail price correctly?
     const expectedSpend = currentPlanInfo.monthlyPricePerSeat * seats;
     const isOverpayingRetail = monthlySpend > expectedSpend * 1.1; // 10% tolerance for taxes/fees
