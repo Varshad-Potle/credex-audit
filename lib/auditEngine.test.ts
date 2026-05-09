@@ -1,0 +1,109 @@
+import { runAudit } from "./auditEngine";
+import { FormData } from "@/types";
+
+// ── Helper to build form data quickly
+const makeForm = (overrides: Partial<FormData> = {}): FormData => ({
+    tools: [],
+    teamSize: 1,
+    useCase: "coding",
+    ...overrides,
+});
+
+// ── Test 1: Empty tools returns zero savings
+test("returns zero savings for empty tool list", () => {
+    const result = runAudit(makeForm({ tools: [] }));
+    expect(result.totalMonthlySavings).toBe(0);
+    expect(result.totalAnnualSavings).toBe(0);
+    expect(result.recommendations).toHaveLength(0);
+});
+
+// ── Test 2: Optimal plan marked as optimal
+test("marks windsurf free as optimal for single coding user", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [{ tool: "windsurf", plan: "free", monthlySpend: 0, seats: 1 }],
+            teamSize: 1,
+            useCase: "coding",
+        })
+    );
+    const rec = result.recommendations[0];
+    expect(rec.isOptimal).toBe(true);
+    expect(rec.monthlySavings).toBe(0);
+});
+
+// ── Test 3: Overpaying retail triggers billing audit
+test("detects overpaying retail price", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [{ tool: "cursor", plan: "pro", monthlySpend: 50, seats: 1 }],
+            teamSize: 1,
+            useCase: "coding",
+        })
+    );
+    const rec = result.recommendations[0];
+    expect(rec.isOptimal).toBe(false);
+    expect(rec.monthlySavings).toBeGreaterThan(0);
+    expect(rec.recommendedAction).toMatch(/billing/i);
+});
+
+// ── Test 4: Team plan overkill for small team
+test("recommends downgrade when team plan used for too few seats", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [{ tool: "claude", plan: "team", monthlySpend: 60, seats: 2 }],
+            teamSize: 2,
+            useCase: "writing",
+        })
+    );
+    const rec = result.recommendations[0];
+    expect(rec.isOptimal).toBe(false);
+    expect(rec.monthlySavings).toBeGreaterThan(0);
+    expect(rec.recommendedAction.toLowerCase()).toMatch(/downgrade/i);
+});
+
+// ── Test 5: Total savings is sum of all recommendations
+test("total monthly savings equals sum of individual recommendation savings", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [
+                { tool: "cursor", plan: "pro", monthlySpend: 50, seats: 1 },
+                { tool: "chatgpt", plan: "plus", monthlySpend: 20, seats: 1 },
+            ],
+            teamSize: 1,
+            useCase: "coding",
+        })
+    );
+    const expectedTotal = result.recommendations.reduce(
+        (sum, r) => sum + r.monthlySavings,
+        0
+    );
+    expect(result.totalMonthlySavings).toBe(expectedTotal);
+});
+
+// ── Test 6: Annual savings is 12x monthly
+test("annual savings is exactly 12x monthly savings", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [{ tool: "cursor", plan: "pro", monthlySpend: 50, seats: 1 }],
+            teamSize: 1,
+            useCase: "coding",
+        })
+    );
+    expect(result.totalAnnualSavings).toBe(result.totalMonthlySavings * 12);
+});
+
+// ── Test 7: Multiple tools all get recommendations
+test("returns one recommendation per tool", () => {
+    const result = runAudit(
+        makeForm({
+            tools: [
+                { tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 },
+                { tool: "claude", plan: "pro", monthlySpend: 20, seats: 1 },
+                { tool: "chatgpt", plan: "plus", monthlySpend: 20, seats: 1 },
+            ],
+            teamSize: 1,
+            useCase: "mixed",
+        })
+    );
+    expect(result.recommendations).toHaveLength(3);
+});
