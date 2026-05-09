@@ -22,3 +22,15 @@
 **Blockers / what I'm stuck on:** Resend transactional email not configured yet.
 
 **Plan for tomorrow:** Write audit engine tests, set up GitHub Actions CI, configure Resend email, write PRICING_DATA.md.
+
+## Day 3 — 2026-05-09
+
+**Hours worked:** 2
+
+**What I did:** Added 7 Jest unit tests for audit engine, all passing. Set up GitHub Actions CI workflow — lint and tests run on every push to main, currently green. Configured Resend transactional email — users now receive audit report link after lead capture. Fixed all lint errors (Link component, escaped entities, unused vars, setState in effect). Created PRICING_DATA.md with verified vendor pricing and TESTS.md.
+
+**What I learned:** Jest config must be .js not .ts in CI environments without ts-node. ESLint setState-in-effect rule requires inline disable comment not useEffect dependency comment.
+
+**Blockers / what I'm stuck on:** 1 User interview remaining done 2/3.
+
+**Plan for tomorrow:** Write all required markdown files — ARCHITECTURE.md, REFLECTION.md, GTM.md, ECONOMICS.md, LANDING_COPY.md, METRICS.md, PROMPTS.md, README.md.
