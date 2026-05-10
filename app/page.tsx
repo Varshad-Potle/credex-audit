@@ -1,3 +1,4 @@
+import FaqSection from "@/components/FaqSection";
 import SpendForm from "@/components/form/SpendForm";
 
 export default function Home() {
@@ -31,6 +32,8 @@ export default function Home() {
       <section className="max-w-2xl mx-auto px-4 pb-16">
         <SpendForm />
       </section>
+
+      <FaqSection />
 
       {/* ── Footer ── */}
       <footer className="border-t">
