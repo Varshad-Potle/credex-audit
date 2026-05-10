@@ -34,3 +34,15 @@
 **Blockers / what I'm stuck on:** 1 User interview remaining done 2/3.
 
 **Plan for tomorrow:** Write all required markdown files — ARCHITECTURE.md, REFLECTION.md, GTM.md, ECONOMICS.md, LANDING_COPY.md, METRICS.md, PROMPTS.md, README.md.
+
+## Day 4 — 2026-05-10
+
+**Hours worked:** 5
+
+**What I did:** Researched and verified pricing for all 8 AI tools against official vendor pages before writing PROMPTS.md, ARCHITECTURE.md, README.md, GTM.md, ECONOMICS.md, LANDING_COPY.md, METRICS.md. Researched distribution channels (specific subreddits, Discord servers, Slack groups) and unit economics benchmarks for B2B lead-gen tools at this stage. Added accordion FAQ section to landing page. Fixed Resend email HTML rendering. Conducted 2 of 3 required user interviews.
+
+**What I learned:** Documentation is harder than coding. GTM and ECONOMICS require actual thinking about the business, not just filling a template. User interviews revealed that context window size matters more to users than cost — something the audit engine doesn't currently account for. Switching cost is a real objection to tool recommendations that needs to be addressed in how alternatives are presented.
+
+**Blockers / what I'm stuck on:** One user interview pending. REFLECTION.md and USER_INTERVIEWS.md pending.
+
+**Plan for tomorrow:** Complete third interview, write USER_INTERVIEWS.md and REFLECTION.md, final polish and Lighthouse audit.
