@@ -9,7 +9,7 @@ Built as part of the Credex Web Development Intern Assignment.
 ## Screenshots
 
 1. Landing Page 
-![Landing Page](screenshots/LandingPage.png)
+![Landing Page](screenshots/landing.png)
 2. Results Page
 ![Results Page](screenshots/ResultsPage.png)
 3. Email Capture
@@ -44,11 +44,13 @@ npm install
 
 Create a `.env.local` file in the project root:
 
+``` bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 GROQ_API_KEY=your_groq_api_key
 RESEND_API_KEY=your_resend_api_key
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
 ### Database Setup
 
