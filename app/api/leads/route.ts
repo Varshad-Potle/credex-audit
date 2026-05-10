@@ -54,25 +54,12 @@ export async function POST(req: NextRequest) {
       html: `
   <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
     <h2 style="color: #111; margin-bottom: 8px;">Your AI Spend Audit is ready</h2>
-    <p style="color: #555; margin-bottom: 24px;">
-      Thanks for using SpendAudit. Your full audit report is available at the link below.
-    </p>
-    
-      href="${auditUrl}"
-      style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-bottom: 24px;"
-    >View Full Audit Report</a>
-    <p style="color: #555;">
-      If you are seeing significant savings opportunities, our team at Credex can help you
-      capture even more through discounted AI credits.
-    </p>
-    <p style="color: #555;">
-      Visit <a href="https://credex.rocks" style="color: #2563eb;">credex.rocks</a> to learn more.
-    </p>
+    <p style="color: #555; margin-bottom: 24px;">Thanks for using SpendAudit. Your full audit report is available at the link below.</p>
+    <a href="${auditUrl}" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-bottom: 24px;">View Full Audit Report</a>
+    <p style="color: #555;">If you are seeing significant savings opportunities, our team at Credex can help you capture even more through discounted AI credits.</p>
+    <p style="color: #555;">Visit <a href="https://credex.rocks" style="color: #2563eb;">credex.rocks</a> to learn more.</p>
     <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
-    <p style="color: #999; font-size: 12px;">
-      SpendAudit by Credex · credex.rocks<br/>
-      You received this email because you requested an audit report.
-    </p>
+    <p style="color: #999; font-size: 12px;">SpendAudit by Credex · credex.rocks<br/>You received this email because you requested an audit report.</p>
   </div>
 `,
     });
