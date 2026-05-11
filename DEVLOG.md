@@ -46,3 +46,15 @@
 **Blockers / what I'm stuck on:** One user interview pending. REFLECTION.md and USER_INTERVIEWS.md pending.
 
 **Plan for tomorrow:** Complete third interview, write USER_INTERVIEWS.md and REFLECTION.md, final polish and Lighthouse audit.
+
+## Day 5 — 2026-05-11
+
+**Hours worked:** 4
+
+**What I did:** Ran Lighthouse audit on Vercel URL — Performance 99 (incognito), Accessibility 100, Best Practices 100, SEO 100. Fixed performance issues by dynamically importing SpendForm and adding aria-labels to Select components. Completed third user interview (Bhargav K., remote dev at Australia-based startup). Updated USER_INTERVIEWS.md with all 3 interviews. Wrote REFLECTION.md.
+
+**What I learned:** Chrome extensions skew Lighthouse scores significantly — always test in incognito. Real user interviews consistently reveal insights that contradict initial assumptions.
+
+**Blockers / what I'm stuck on:** Final end-to-end tests and file verifcation.
+
+**Plan for tomorrow:** Write Day 6 and Day 7 DEVLOG entries, final end-to-end test, submit Google Form.
