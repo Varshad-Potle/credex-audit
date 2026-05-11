@@ -202,7 +202,7 @@ export default function SpendForm() {
                                 }))
                             }
                         >
-                            <SelectTrigger>
+                            <SelectTrigger aria-label="Select primary use case">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -275,7 +275,7 @@ export default function SpendForm() {
                                                 updateTool(entry.tool, "plan", val)
                                             }
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger aria-label={`Select plan for ${PRICING_DATA[entry.tool].displayName}`}>
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>

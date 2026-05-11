@@ -1,9 +1,18 @@
 import FaqSection from "@/components/FaqSection";
-import SpendForm from "@/components/form/SpendForm";
+import dynamic from "next/dynamic";
+
+const SpendForm = dynamic(() => import("@/components/form/SpendForm"), {
+  loading: () => (
+    <div className="max-w-2xl mx-auto px-4 py-8 text-center text-muted-foreground text-sm">
+      Loading...
+    </div>
+  ),
+});
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
+
       {/* ── Header ── */}
       <header className="border-b">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -33,6 +42,7 @@ export default function Home() {
         <SpendForm />
       </section>
 
+      {/* ── FAQ ── */}
       <FaqSection />
 
       {/* ── Footer ── */}
@@ -42,6 +52,7 @@ export default function Home() {
           <span>Pricing data verified weekly</span>
         </div>
       </footer>
+
     </main>
   );
 }
