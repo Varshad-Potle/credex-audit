@@ -58,3 +58,15 @@
 **Blockers / what I'm stuck on:** Final end-to-end tests and file verifcation.
 
 **Plan for tomorrow:** Write Day 6 and Day 7 DEVLOG entries, final end-to-end test, submit Google Form.
+
+## Day 6 — 2026-05-12
+
+**Hours worked:** 2
+
+**What I did:** Final checks — verified all 12 required MD files present, CI green, end-to-end flow working on Vercel. Fixed 500 error caused by missing Vercel environment variables. Updated site metadata title and description. Replaced default Next.js favicon. Removed auto-generated AGENTS.md. Confirmed Lighthouse scores pass thresholds (Performance 99 incognito, Accessibility 100, Best Practices 100, SEO 100).
+
+**What I learned:** Always verify environment variables on Vercel separately from local — they don't sync automatically.
+
+**Blockers / what I'm stuck on:** Nothing blocking. Ready to submit.
+
+**Plan for tomorrow:** submission - fill google form
