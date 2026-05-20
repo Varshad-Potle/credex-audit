@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { runAudit } from "./auditEngine";
 import { FormData } from "@/types";
 
@@ -106,4 +107,29 @@ test("returns one recommendation per tool", () => {
         })
     );
     expect(result.recommendations).toHaveLength(3);
+});
+
+// ── Test 8: Pricing snapshot structure is valid
+test("pricing snapshot can be serialized and deserialized", () => {
+  // Simulate what we save to Supabase
+  const pricingSnapshot = Object.entries(require("./pricingData").PRICING_DATA).reduce(
+    (acc: any, [tool, info]: any) => {
+      acc[tool] = {
+        displayName: info.displayName,
+        plans: info.plans,
+      };
+      return acc;
+    },
+    {}
+  );
+
+  // Verify structure is valid JSON and contains expected tools
+  const serialized = JSON.stringify(pricingSnapshot);
+  const deserialized = JSON.parse(serialized);
+
+  expect(Object.keys(deserialized)).toContain("cursor");
+  expect(Object.keys(deserialized)).toContain("claude");
+  expect(deserialized.cursor).toHaveProperty("displayName");
+  expect(deserialized.cursor).toHaveProperty("plans");
+  expect(Object.keys(deserialized.cursor.plans).length).toBeGreaterThan(0);
 });
