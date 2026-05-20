@@ -45,4 +45,26 @@ Added 3 new tests:
 
 All 11 tests passing.
 
-## Next: Email notifications
+## 2026-05-21 02:10 – Email Notifications Phase
+
+Building email template and sending logic:
+- lib/emailNotifications.ts: email HTML template, consolidation by user email
+- app/api/send-pricing-emails/route.ts: orchestrates detection + consolidation + sending
+
+Key decision: consolidate multiple affected audits into one email per user to avoid spam.
+
+## 2026-05-21 02:25 – Blocker
+Trying to commit a file with typo lost 5 minutes figuring out.
+
+## 2026-05-21 02:30 – Email Endpoint Complete
+
+POST /api/send-pricing-emails now:
+- Fetches all audits with emails
+- Detects pricing changes
+- Finds which audits are affected
+- Consolidates notifications (1 per user)
+- Sends via Resend
+
+Tested flow locally — endpoint works, no actual emails sent yet (would need real email in Resend).
+
+## Next: Diff view for re-audits
