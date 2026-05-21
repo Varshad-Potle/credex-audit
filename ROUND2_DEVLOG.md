@@ -84,4 +84,30 @@ Added 3 new tests:
 
 All 14 tests passing.
 
-## Next: Final polish and required markdown files
+## 2026-05-21 12:45 – Email Notifications Complete
+
+Built lib/emailNotifications.ts:
+- buildEmailHtml(): creates the email template with changes list and affected audits
+- consolidateNotificationsByEmail(): groups multiple audits per user (key feature — avoids spam)
+- sendPricingChangeNotifications(): sends via Resend
+
+Key decision: consolidate emails so if pricing change affects 3 of a user's audits, they get 1 email not 3.
+
+## 2026-05-21 01:00 – Resend Initialization Bug
+
+Tests failed: "Missing API key" when importing emailNotifications.ts at the top level.
+
+Root cause: Resend was initialized at module import time (const resend = new Resend(...)) but RESEND_API_KEY doesn't exist in test environment.
+
+Fix: Moved Resend initialization inside sendPricingChangeNotifications() function so it only initializes when actually called, not on import.
+
+## 2026-05-21 01:15 – Final Tests for Email
+
+Added 3 new tests:
+- consolidateNotificationsByEmail groups audits by email correctly
+- consolidateNotificationsByEmail avoids duplicate emails (1 per user)
+- consolidateNotificationsByEmail passes changes through unchanged
+
+All 17 tests passing.
+
+## Next: Required markdown files
