@@ -1,6 +1,6 @@
 # Round 2 Devlog — Re-audit on Pricing Change
 
-## 2026-05-21 23:30 – Start
+## 2026-05-20 23:30 – Start
 
 Read assignment. Planning to:
 1. Add email + pricing_snapshot columns to audits table
@@ -67,4 +67,21 @@ POST /api/send-pricing-emails now:
 
 Tested flow locally — endpoint works, no actual emails sent yet (would need real email in Resend).
 
-## Next: Diff view for re-audits
+## 2026-05-21 12:00 – Diff View Implementation
+
+Built the diff comparison flow:
+- components/results/AuditDiff.tsx: side-by-side old vs new, highlights changes
+- app/audit/[id]/diff/page.tsx: re-runs audit with current pricing, shows delta
+
+Key design: savings delta is the hero metric. Shows users exactly what changed in dollars.
+
+## 2026-05-20 12:35 – Diff Tests
+
+Added 3 new tests:
+- Savings delta calculation works
+- Re-running same audit produces consistent results
+- Diff correctly identifies which recommendations changed
+
+All 14 tests passing.
+
+## Next: Final polish and required markdown files
