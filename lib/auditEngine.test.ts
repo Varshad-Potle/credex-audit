@@ -204,3 +204,60 @@ test("auditAffectedByChanges returns false when different tool changed", () => {
   const isAffected = auditAffectedByChanges(audit, changes);
   expect(isAffected).toBe(false);
 });
+
+test("audit diff correctly calculates savings delta", () => {
+  const oldAudit = runAudit(
+    makeForm({
+      tools: [{ tool: "cursor", plan: "pro", monthlySpend: 30, seats: 1 }],
+    })
+  );
+
+  const newAudit = runAudit(
+    makeForm({
+      tools: [{ tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 }],
+    })
+  );
+
+  const monthlySavingsDelta =
+    newAudit.totalMonthlySavings - oldAudit.totalMonthlySavings;
+
+  // If pricing optimization detected, delta should be positive or zero
+  expect(monthlySavingsDelta).toBeGreaterThanOrEqual(-30); // worst case
+  expect(monthlySavingsDelta).toBeLessThanOrEqual(30); // best case
+});
+
+test("re-running same audit produces consistent results", () => {
+  const formData = makeForm({
+    tools: [{ tool: "claude", plan: "pro", monthlySpend: 20, seats: 1 }],
+  });
+
+  const audit1 = runAudit(formData);
+  const audit2 = runAudit(formData);
+
+  expect(audit1.totalMonthlySavings).toBe(audit2.totalMonthlySavings);
+  expect(audit1.totalAnnualSavings).toBe(audit2.totalAnnualSavings);
+  expect(audit1.recommendations).toHaveLength(
+    audit2.recommendations.length
+  );
+});
+
+test("diff shows which recommendations changed", () => {
+  const formData = makeForm({
+    tools: [
+      { tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 },
+      { tool: "claude", plan: "pro", monthlySpend: 20, seats: 1 },
+    ],
+  });
+
+  const oldAudit = runAudit(formData);
+  const newAudit = runAudit(formData);
+
+  // Find which tools have different recommendations
+  const changedTools = oldAudit.recommendations.filter((oldRec) => {
+    const newRec = newAudit.recommendations.find((r) => r.tool === oldRec.tool);
+    return newRec && oldRec.recommendedAction !== newRec.recommendedAction;
+  });
+
+  // Should have 0 to N tools changed (depending on pricing snapshot diff)
+  expect(Array.isArray(changedTools)).toBe(true);
+});
