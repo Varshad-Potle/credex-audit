@@ -25,7 +25,7 @@ export const PRICING_DATA: Record<ToolName, ToolInfo> = {
             },
             pro: {
                 name: "Pro",
-                monthlyPricePerSeat: 20,
+                monthlyPricePerSeat: 25,
                 minSeats: 1,
                 bestFor: ["coding"],
             },
