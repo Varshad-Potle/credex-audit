@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { PricingChange } from "./pricingComparison";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export type AffectedAuditInfo = {
   auditId: string;
   email: string;
@@ -114,6 +112,9 @@ export async function sendPricingChangeNotifications(
   notifications: ConsolidatedNotification[]
 ): Promise<{ sent: number; failed: number; errors: any[] }> {
   const results = { sent: 0, failed: 0, errors: [] as any[] };
+
+  // Initialize Resend here, not at module level
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   for (const notification of notifications) {
     try {

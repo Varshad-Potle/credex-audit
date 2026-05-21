@@ -2,6 +2,9 @@
 import { runAudit } from "./auditEngine";
 import { AuditResult, FormData } from "@/types";
 import { detectPricingChanges, auditAffectedByChanges } from "./pricingComparison";
+import { consolidateNotificationsByEmail } from "./emailNotifications";
+import { AffectedAuditInfo, ConsolidatedNotification } from "@/lib/emailNotifications";
+
 
 // ── Helper to build form data quickly
 const makeForm = (overrides: Partial<FormData> = {}): FormData => ({
@@ -260,4 +263,58 @@ test("diff shows which recommendations changed", () => {
 
   // Should have 0 to N tools changed (depending on pricing snapshot diff)
   expect(Array.isArray(changedTools)).toBe(true);
+});
+
+test("consolidateNotificationsByEmail groups audits by email", () => {
+  const audits: AffectedAuditInfo[] = [
+    { auditId: "1", email: "user@example.com", toolsAffected: ["cursor"] },
+    { auditId: "2", email: "user@example.com", toolsAffected: ["claude"] },
+    { auditId: "3", email: "other@example.com", toolsAffected: ["cursor"] },
+  ];
+
+  const changes = [
+    { tool: "cursor", changeType: "price_changed" as const, details: "Price increased" },
+  ];
+
+  const consolidated = consolidateNotificationsByEmail(audits, changes);
+
+  expect(consolidated).toHaveLength(2); // 2 unique emails
+  expect(consolidated[0].audits).toHaveLength(2); // user@example.com has 2 audits
+  expect(consolidated[1].audits).toHaveLength(1); // other@example.com has 1 audit
+});
+
+test("consolidateNotificationsByEmail avoids duplicate emails", () => {
+  const audits: AffectedAuditInfo[] = [
+    { auditId: "1", email: "user@example.com", toolsAffected: ["cursor"] },
+    { auditId: "2", email: "user@example.com", toolsAffected: ["claude"] },
+    { auditId: "3", email: "user@example.com", toolsAffected: ["cursor", "claude"] },
+  ];
+
+  const changes = [
+    { tool: "cursor", changeType: "price_changed" as const, details: "Price increased" },
+    { tool: "claude", changeType: "price_changed" as const, details: "New plan added" },
+  ];
+
+  const consolidated = consolidateNotificationsByEmail(audits, changes);
+
+  // Should only send ONE email to user@example.com, not three
+  expect(consolidated).toHaveLength(1);
+  expect(consolidated[0].email).toBe("user@example.com");
+  expect(consolidated[0].audits).toHaveLength(3);
+});
+
+test("consolidateNotificationsByEmail passes changes through unchanged", () => {
+  const audits: AffectedAuditInfo[] = [
+    { auditId: "1", email: "user@example.com", toolsAffected: ["cursor"] },
+  ];
+
+  const changes = [
+    { tool: "cursor", changeType: "price_changed" as const, details: "Cursor Pro: $20 → $25" },
+    { tool: "claude", changeType: "plan_added" as const, details: "Claude Sonnet added" },
+  ];
+
+  const consolidated = consolidateNotificationsByEmail(audits, changes);
+
+  expect(consolidated[0].changes).toHaveLength(2);
+  expect(consolidated[0].changes).toEqual(changes);
 });
