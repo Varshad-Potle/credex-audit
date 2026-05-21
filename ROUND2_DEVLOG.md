@@ -127,6 +127,10 @@ Verified all 4 required features work end-to-end:
 
 All 17 tests passing.
 
+## 2026-05-21 16:30 – Manual Test
+
+Tested the end-to-end flow on localhost
+
 ## Timeline
 
 - 23:30 – Start
@@ -143,7 +147,8 @@ All 17 tests passing.
 - 13:15 – Final email tests
 - 13:25 – Documentation complete
 - 14:10 – Final verification
+- 16:30 – Manual test
 
-Total: ~7 hours (including breaks)
+Total: ~7 hours (including breaks & manual testing)
 
 ## Ready for submission
