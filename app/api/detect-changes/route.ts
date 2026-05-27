@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { detectPricingChanges, auditAffectedByChanges } from "@/lib/pricingComparison";
 import { AuditResult } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     // Fetch all audits from database
     const { data: allAudits, error: fetchError } = await supabase
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         id: a.id,
         email: a.user_email,
         toolsAffected: changes
-          .filter((c) => a.form_data.tools.some((t: any) => t.tool === c.tool))
+          .filter((c) => a.form_data.tools.some((t: { tool: string }) => t.tool === c.tool))
           .map((c) => c.tool),
       })),
     });

@@ -108,10 +108,16 @@ function buildEmailHtml(notification: ConsolidatedNotification): string {
 }
 
 // Send consolidated emails
+type NotificationSendResult = {
+  sent: number;
+  failed: number;
+  errors: Array<{ email: string; error: unknown }>;
+};
+
 export async function sendPricingChangeNotifications(
   notifications: ConsolidatedNotification[]
-): Promise<{ sent: number; failed: number; errors: any[] }> {
-  const results = { sent: 0, failed: 0, errors: [] as any[] };
+): Promise<NotificationSendResult> {
+  const results: NotificationSendResult = { sent: 0, failed: 0, errors: [] };
 
   // Initialize Resend here, not at module level
   const resend = new Resend(process.env.RESEND_API_KEY);

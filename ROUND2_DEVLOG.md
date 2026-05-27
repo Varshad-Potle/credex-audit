@@ -75,7 +75,7 @@ Built the diff comparison flow:
 
 Key design: savings delta is the hero metric. Shows users exactly what changed in dollars.
 
-## 2026-05-20 12:35 – Diff Tests
+## 2026-05-21 12:35 – Diff Tests
 
 Added 3 new tests:
 - Savings delta calculation works

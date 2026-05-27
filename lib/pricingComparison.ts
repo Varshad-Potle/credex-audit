@@ -1,4 +1,4 @@
-import { PRICING_DATA } from "./pricingData";
+import { PlanInfo, PRICING_DATA } from "./pricingData";
 import { AuditResult } from "@/types";
 
 export type PricingChange = {
@@ -7,8 +7,16 @@ export type PricingChange = {
   details: string;
 };
 
+type PricingSnapshot = Record<
+  string,
+  {
+    displayName: string;
+    plans: Record<string, Partial<PlanInfo>>;
+  }
+>;
+
 export function detectPricingChanges(
-  oldSnapshot: Record<string, any>
+  oldSnapshot: PricingSnapshot
 ): PricingChange[] {
   const changes: PricingChange[] = [];
 
@@ -26,7 +34,7 @@ export function detectPricingChanges(
     }
 
     // Check for price changes in each plan
-    Object.entries(currentTool.plans).forEach(([planKey, currentPlan]: any) => {
+    Object.entries(currentTool.plans).forEach(([planKey, currentPlan]) => {
       const oldPlan = oldTool.plans?.[planKey];
 
       if (!oldPlan) {

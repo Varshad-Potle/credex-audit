@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { runAudit } from "@/lib/auditEngine";
@@ -42,7 +43,7 @@ export default async function AuditDiffPage({ params }: Props) {
       {/* ── Header ── */}
       <header className="border-b">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <a
+          <Link
             href="/"
             className="font-semibold text-lg tracking-tight hover:opacity-80 transition-opacity"
           >
@@ -50,7 +51,7 @@ export default async function AuditDiffPage({ params }: Props) {
             <span className="text-muted-foreground font-normal text-sm">
               by Credex
             </span>
-          </a>
+          </Link>
           <span className="text-xs text-muted-foreground">
             Audit Comparison
           </span>
@@ -90,12 +91,12 @@ export default async function AuditDiffPage({ params }: Props) {
 
         {/* ── Run another audit ── */}
         <div className="text-center">
-          <a
+          <Link
             href="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             ← Start a new audit
-          </a>
+          </Link>
         </div>
       </section>
 

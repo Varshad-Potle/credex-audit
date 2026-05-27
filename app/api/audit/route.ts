@@ -4,6 +4,11 @@ import { runAudit } from "@/lib/auditEngine";
 import { FormData } from "@/types";
 import { PRICING_DATA } from "@/lib/pricingData";
 
+type PricingSnapshot = Record<string, {
+  displayName: string;
+  plans: Record<string, unknown>;
+}>;
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -28,7 +33,7 @@ export async function POST(req: NextRequest) {
         };
         return acc;
       },
-      {} as Record<string, any>
+      {} as PricingSnapshot
     );
 
     const { data, error } = await supabase

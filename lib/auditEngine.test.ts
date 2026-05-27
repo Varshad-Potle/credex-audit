@@ -3,7 +3,8 @@ import { runAudit } from "./auditEngine";
 import { AuditResult, FormData } from "@/types";
 import { detectPricingChanges, auditAffectedByChanges } from "./pricingComparison";
 import { consolidateNotificationsByEmail } from "./emailNotifications";
-import { AffectedAuditInfo, ConsolidatedNotification } from "@/lib/emailNotifications";
+import { PRICING_DATA } from "./pricingData";
+import { AffectedAuditInfo } from "@/lib/emailNotifications";
 
 
 // ── Helper to build form data quickly
@@ -116,15 +117,15 @@ test("returns one recommendation per tool", () => {
 // ── Test 8: Pricing snapshot structure is valid
 test("pricing snapshot can be serialized and deserialized", () => {
   // Simulate what we save to Supabase
-  const pricingSnapshot = Object.entries(require("./pricingData").PRICING_DATA).reduce(
-    (acc: any, [tool, info]: any) => {
+  const pricingSnapshot = Object.entries(PRICING_DATA).reduce(
+    (acc, [tool, info]) => {
       acc[tool] = {
         displayName: info.displayName,
         plans: info.plans,
       };
       return acc;
     },
-    {}
+    {} as Record<string, { displayName: string; plans: Record<string, unknown> }>
   );
 
   // Verify structure is valid JSON and contains expected tools
@@ -156,8 +157,9 @@ test("detectPricingChanges finds price increases", () => {
   const cursorChanges = changes.filter((c) => c.tool === "cursor");
 
   // If current pricing in PRICING_DATA matches old snapshot, no changes detected
-  // This test verifies the structure works
+  // This test verifies the structure works and returns a list of tool changes.
   expect(Array.isArray(changes)).toBe(true);
+  expect(Array.isArray(cursorChanges)).toBe(true);
 });
 
 test("auditAffectedByChanges returns true when user tool pricing changed", () => {
