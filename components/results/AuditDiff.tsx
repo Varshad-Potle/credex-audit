@@ -79,7 +79,7 @@ export default function AuditDiff({ oldAudit, newAudit }: Props) {
               {/* Tool name */}
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">
-                  {PRICING_DATA[oldRec.tool].displayName}
+                  {PRICING_DATA[oldRec.tool]?.displayName ?? oldRec.tool}
                 </h3>
                 {recommendationChanged && (
                   <Badge className="bg-blue-600">Recommendation Changed</Badge>

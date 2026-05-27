@@ -6,13 +6,47 @@ import { AuditResult } from "@/types";
 
 export async function POST() {
   try {
-    // Fetch all audits from database
-    const { data: allAudits, error: fetchError } = await supabase
-      .from("audits")
-      .select("*")
-      .not("user_email", "is", null); // Only audits with email
+    // Fetch audits from database in batches, selecting only required columns
+    const batchSize = 500;
+    const allAudits: {
+      id: string;
+      user_email: string | null;
+      form_data: any;
+      pricing_snapshot: any;
+      recommendations: any;
+      total_monthly_savings: number | null;
+      total_annual_savings: number | null;
+    }[] = [];
+    let from = 0;
 
-    if (fetchError || !allAudits || allAudits.length === 0) {
+    while (true) {
+      const { data: auditBatch, error: fetchError } = await supabase
+        .from("audits")
+        .select(
+          "id, user_email, form_data, pricing_snapshot, recommendations, total_monthly_savings, total_annual_savings"
+        )
+        .not("user_email", "is", null)
+        .order("id", { ascending: true })
+        .range(from, from + batchSize - 1);
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      if (!auditBatch || auditBatch.length === 0) {
+        break;
+      }
+
+      allAudits.push(...auditBatch);
+
+      if (auditBatch.length < batchSize) {
+        break;
+      }
+
+      from += batchSize;
+    }
+
+    if (allAudits.length === 0) {
       return NextResponse.json({
         message: "No audits with emails found",
         sent: 0,
