@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { detectPricingChanges, auditAffectedByChanges } from "@/lib/pricingComparison";
-import { AuditResult } from "@/types";
+import { AuditResult, FormData, Recommendation } from "@/types";
+
+type AuditRow = {
+  id: string;
+  user_email: string | null;
+  form_data: FormData;
+  pricing_snapshot: Record<string, unknown>;
+  recommendations: Recommendation[];
+  total_monthly_savings: number | null;
+  total_annual_savings: number | null;
+};
 
 export async function POST() {
   try {
@@ -61,7 +71,7 @@ export async function POST() {
 
       auditsChecked += auditBatch.length;
 
-      for (const auditRow of auditBatch) {
+      for (const auditRow of auditBatch as AuditRow[]) {
         const audit: AuditResult = {
           formData: auditRow.form_data,
           recommendations: auditRow.recommendations,
@@ -75,7 +85,7 @@ export async function POST() {
             id: auditRow.id,
             email: auditRow.user_email,
             toolsAffected: changes
-              .filter((c) => auditRow.form_data.tools.some((t: any) => t.tool === c.tool))
+              .filter((c) => auditRow.form_data.tools.some((t) => t.tool === c.tool))
               .map((c) => c.tool),
           });
         }

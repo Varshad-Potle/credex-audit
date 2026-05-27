@@ -2,25 +2,27 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { detectPricingChanges, auditAffectedByChanges } from "@/lib/pricingComparison";
 import { consolidateNotificationsByEmail, sendPricingChangeNotifications } from "@/lib/emailNotifications";
-import { AuditResult } from "@/types";
+import { AuditResult, FormData, Recommendation } from "@/types";
+
+type AuditRow = {
+  id: string;
+  user_email: string | null;
+  form_data: FormData;
+  pricing_snapshot: Record<string, unknown>;
+  recommendations: Recommendation[];
+  total_monthly_savings: number | null;
+  total_annual_savings: number | null;
+};
 
 export async function POST() {
   try {
     // Fetch audits from database in batches, selecting only required columns
     const batchSize = 500;
-    const allAudits: {
-      id: string;
-      user_email: string | null;
-      form_data: any;
-      pricing_snapshot: any;
-      recommendations: any;
-      total_monthly_savings: number | null;
-      total_annual_savings: number | null;
-    }[] = [];
+    const allAudits: AuditRow[] = [];
     let from = 0;
 
     while (true) {
-      const { data: auditBatch, error: fetchError } = await supabase
+      const query = await supabase
         .from("audits")
         .select(
           "id, user_email, form_data, pricing_snapshot, recommendations, total_monthly_savings, total_annual_savings"
@@ -28,6 +30,9 @@ export async function POST() {
         .not("user_email", "is", null)
         .order("id", { ascending: true })
         .range(from, from + batchSize - 1);
+
+      const auditBatch = query.data as AuditRow[] | null;
+      const fetchError = query.error;
 
       if (fetchError) {
         throw fetchError;
@@ -81,7 +86,7 @@ export async function POST() {
         auditId: a.id,
         email: a.user_email,
         toolsAffected: changes
-          .filter((c) => a.form_data.tools.some((t: { tool: string }) => t.tool === c.tool))
+          .filter((c) => a.form_data.tools.some((t) => t.tool === c.tool))
           .map((c) => c.tool),
       }));
 
