@@ -140,24 +140,31 @@ test("pricing snapshot can be serialized and deserialized", () => {
 
 
 test("detectPricingChanges finds price increases", () => {
+  const currentCursorPro = require("./pricingData").PRICING_DATA.cursor.plans.pro;
   const oldSnapshot = {
     cursor: {
       displayName: "Cursor",
       plans: {
-        pro: { monthlyPricePerSeat: 20, minSeats: 1, bestFor: ["coding"] },
+        pro: {
+          ...currentCursorPro,
+          monthlyPricePerSeat: currentCursorPro.monthlyPricePerSeat - 5,
+        },
       },
     },
   };
 
   const changes = detectPricingChanges(oldSnapshot);
-
-  // Cursor Pro should show as changed (actual is $20, old was $20, so no change)
-  // But we need to mock a price change. For testing, we verify the logic detects it.
   const cursorChanges = changes.filter((c) => c.tool === "cursor");
 
-  // If current pricing in PRICING_DATA matches old snapshot, no changes detected
-  // This test verifies the structure works
-  expect(Array.isArray(changes)).toBe(true);
+  expect(cursorChanges.length).toBeGreaterThan(0);
+  expect(changes).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        tool: "cursor",
+        changeType: "price_changed",
+      }),
+    ])
+  );
 });
 
 test("auditAffectedByChanges returns true when user tool pricing changed", () => {
