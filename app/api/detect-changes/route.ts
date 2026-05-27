@@ -40,24 +40,26 @@ export async function POST() {
       const from = page * batchSize;
       const to = from + batchSize - 1;
       const { data: auditBatch, error: fetchError } = await supabase
-        .from("audits")
+        .from<"audits", AuditRow>("audits")
         .select(auditSelectColumns)
         .range(from, to);
 
-      if (fetchError || !auditBatch) {
+      const auditRows = auditBatch as AuditRow[] | null;
+
+      if (fetchError || !auditRows) {
         return NextResponse.json(
           { error: "Failed to fetch audits" },
           { status: 500 }
         );
       }
 
-      if (auditBatch.length === 0) {
+      if (auditRows.length === 0) {
         break;
       }
 
       if (!changesInitialized) {
         // Detect pricing changes from the same first audit snapshot used previously
-        changes = detectPricingChanges(auditBatch[0]?.pricing_snapshot || {});
+        changes = detectPricingChanges(auditRows[0]?.pricing_snapshot || {});
         changesInitialized = true;
 
         if (changes.length === 0) {
@@ -69,21 +71,21 @@ export async function POST() {
         }
       }
 
-      auditsChecked += auditBatch.length;
+      auditsChecked += auditRows.length;
 
-      for (const auditRow of auditBatch as AuditRow[]) {
+      for (const auditRow of auditRows) {
         const audit: AuditResult = {
           formData: auditRow.form_data,
           recommendations: auditRow.recommendations,
-          totalMonthlySavings: auditRow.total_monthly_savings,
-          totalAnnualSavings: auditRow.total_annual_savings,
+          totalMonthlySavings: auditRow.total_monthly_savings ?? 0,
+          totalAnnualSavings: auditRow.total_annual_savings ?? 0,
           id: auditRow.id,
         };
 
         if (auditAffectedByChanges(audit, changes)) {
           affectedAudits.push({
             id: auditRow.id,
-            email: auditRow.user_email,
+            email: auditRow.user_email ?? "",
             toolsAffected: changes
               .filter((c) => auditRow.form_data.tools.some((t) => t.tool === c.tool))
               .map((c) => c.tool),

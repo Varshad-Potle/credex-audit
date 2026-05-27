@@ -16,13 +16,14 @@ type PricingSnapshot = Record<
 >;
 
 export function detectPricingChanges(
-  oldSnapshot: PricingSnapshot
+  oldSnapshot: Record<string, unknown>
 ): PricingChange[] {
   const changes: PricingChange[] = [];
+  const typedSnapshot = oldSnapshot as PricingSnapshot;
 
   // Check if any tool pricing has changed
   Object.entries(PRICING_DATA).forEach(([toolKey, currentTool]) => {
-    const oldTool = oldSnapshot[toolKey];
+    const oldTool = typedSnapshot[toolKey];
 
     if (!oldTool) {
       changes.push({

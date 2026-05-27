@@ -76,15 +76,15 @@ export async function POST() {
         const audit: AuditResult = {
           formData: auditRow.form_data,
           recommendations: auditRow.recommendations,
-          totalMonthlySavings: auditRow.total_monthly_savings,
-          totalAnnualSavings: auditRow.total_annual_savings,
+          totalMonthlySavings: auditRow.total_monthly_savings ?? 0,
+          totalAnnualSavings: auditRow.total_annual_savings ?? 0,
           id: auditRow.id,
         };
         return auditAffectedByChanges(audit, changes);
       })
       .map((a) => ({
         auditId: a.id,
-        email: a.user_email,
+        email: a.user_email ?? "",
         toolsAffected: changes
           .filter((c) => a.form_data.tools.some((t) => t.tool === c.tool))
           .map((c) => c.tool),
