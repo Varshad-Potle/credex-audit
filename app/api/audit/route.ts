@@ -8,7 +8,10 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const formData: FormData = body.formData;
-    const userEmail: string = body.userEmail || null;
+    const userEmail: string | null =
+      typeof body.userEmail === "string"
+        ? body.userEmail.trim().toLowerCase() || null
+        : null;
 
     if (!formData || !formData.tools || formData.tools.length === 0) {
       return NextResponse.json(
